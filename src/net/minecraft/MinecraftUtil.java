@@ -108,9 +108,9 @@ public class MinecraftUtil
     default:
       workingDirectory = new File(userHome, applicationName + '/');
     }
-    if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
-      throw new RuntimeException("The working directory could not be created: " + workingDirectory);
-    }
+//    if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
+//      throw new RuntimeException("The working directory could not be created: " + workingDirectory);
+//    }
     return workingDirectory;
   }
 

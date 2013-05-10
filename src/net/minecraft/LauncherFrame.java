@@ -6,10 +6,12 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class LauncherFrame extends Frame
 {
@@ -20,7 +22,7 @@ public class LauncherFrame extends Frame
   public boolean forceUpdate = false;
 
   public LauncherFrame() {
-    super("Minecraft Launcher (by AnjoCaido)");
+    super("Minecraft Launcher (by AnjoCaido, modified by Jiahao Li)");
     System.out.println("Hello!");
     setBackground(Color.BLACK);
     this.loginForm = new LoginForm(this);
@@ -68,7 +70,50 @@ public class LauncherFrame extends Frame
     return MinecraftUtil.getFakeLatestVersion() + ":35b9fd01865fda9d70b157e244cf801c:" + userName + ":12345:";
   }
 
+  private void symLink(String source, String dest) {
+    Process process;
+    try {
+        process = Runtime.getRuntime().exec( new String[] { "ln", "-s", source, dest } );
+        process.waitFor();
+        process.destroy();
+    } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+  }
+  
+  private boolean linkDirectory() {
+    File workingDirectory = MinecraftUtil.getWorkingDirectory(); 
+    File jarDirectory = new File(LauncherFrame.class.getProtectionDomain().getCodeSource().getLocation().getPath()); 
+    File minecraftDirectory = new File(jarDirectory.getParentFile(), "minecraft");
+    
+    
+    if (workingDirectory.exists()) {
+        try {
+            if (!workingDirectory.getCanonicalPath().equals(workingDirectory.getAbsolutePath())) {
+                // It is a symlink
+                workingDirectory.delete(); 
+            } else {
+                JOptionPane.showConfirmDialog(null, "The path " + workingDirectory.getPath() + " is already in use. Please clear out that path. ", "Error", JOptionPane.DEFAULT_OPTION);
+                return false; 
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    symLink(minecraftDirectory.getPath(), workingDirectory.getPath()); 
+    
+    return true; 
+  }
+  
   public void login(String userName) {
+    if (!linkDirectory())
+        return; 
     String result = getFakeResult(userName);
     String[] values = result.split(":");
     this.launcher = new Launcher();

@@ -313,8 +313,8 @@ public class LoginForm extends Panel
       }
     } catch (Error localError) {
     }
-    loginPanel.add(registerPanel, "Center");
-    loginPanel.add(this.launchButton, "East");
+//    loginPanel.add(registerPanel, "Center");
+    loginPanel.add(this.launchButton, "Center");
     Panel anjoPanel = new Panel();
     this.openManager.addActionListener(new ActionListener()
     {
@@ -323,7 +323,7 @@ public class LoginForm extends Panel
       }
     });
     anjoPanel.add(this.openManager);
-    loginPanel.add(anjoPanel, "South");
+//    loginPanel.add(anjoPanel, "South");
     panel.add(loginPanel, "South");
 
     this.errorLabel.setFont(new Font(null, 2, 16));
